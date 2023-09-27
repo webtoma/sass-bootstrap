@@ -4,19 +4,23 @@ const uglify                        = require('gulp-uglify');
 const rename                        = require('gulp-rename');
 const sass                          = require('gulp-sass')(require('sass'));
 const browserSync                   = require('browser-sync').create();
+const clean                           = require('gulp-clean');
 
-function cleanJS(){
+function process_JS(){
   return src('src/js/*.js')
         .pipe(babel())
         .pipe(uglify())
         .pipe(rename({ extname: '.min.js' }))
-        .pipe(dest('public/js/'));
+        .pipe(dest('public/js/'))
+        .pipe(browserSync.stream());
 }
-function cleanHTML(){
+function process_HTML(){
   return src('src/*.html')
-        .pipe(dest('public/'));
+        .pipe(dest('public/'))
+        .pipe(dest('backup/'))
+        .pipe(browserSync.stream());;
 }
-function cleanCSS(){
+function process_CSS(){
   return src('src/scss/style.scss')
         .pipe(sass({outputStyle: 'compressed'}))
         .pipe(dest('public/css/'))
@@ -25,6 +29,31 @@ function cleanCSS(){
 function build(cb) {
   cb();
 }
+function clean_All(){
+  return src('public/*')
+          .pipe(clean());
+}
+function clean_JS(){
+  return src('public/js/*')
+          .pipe(clean());
+}
+function clean_CSS(){
+  return src('public/css/*')
+          .pipe(clean());
+}
+function clean_HTML(){
+  return src('public/*.html')
+          .pipe(clean());
+}
 
+function watchFiles(){
+  browserSync.init({
+    server: "./public/"
+  });
+  watch('src/js/*.js', series(clean_JS, process_JS)).on('change', browserSync.reload);
+  watch('src/scss/*.scss', series(clean_CSS, process_CSS)).on('change', browserSync.reload);
+  watch('src/*.html', series(clean_HTML, process_HTML)).on('change', browserSync.reload);
+}
 exports.build = build;                    // export task so it can be used outside
-exports.default = series(cleanJS, cleanCSS, cleanHTML, build);   // Run 2 tasks in series
+exports.default = series(clean_All, process_JS, process_CSS, process_HTML, build);   // Run 2 tasks in series
+exports.watch = watchFiles;               // Run watchFiles task
