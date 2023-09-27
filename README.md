@@ -4,6 +4,8 @@
 ## INSTALL
 
 ### Initialisation
+
+Sous Bash (et uniquement sous Bash):
 ```
 npm init
 git init
@@ -22,7 +24,11 @@ git init
 ```
 npm install bootstrap
 npm install --global gulp-cli
+npm install browser-sync gulp gulp-sass --save-dev
 ```
+
+
+
 ```
 
 ```
