@@ -27,7 +27,11 @@ npm install --global gulp-cli
 npm install browser-sync gulp gulp-sass --save-dev
 ```
 
+### Création de la structure
 
+- un dossier src
+- deux sous dossiers 'js' et 'scss'
+- un fichier 'main.js' et un fichier 'style.scss' dans les dossiers respectifs!
 
 ```
 
